@@ -1,0 +1,74 @@
+---
+title: "Varroa cage trialsr"
+author: "Reed Johnson"
+date: "9/27/2022"
+output: html_document
+---
+
+## Install libraries
+```{r setup, include=FALSE, cache = FALSE}
+require("knitr")
+knitr::opts_chunk$set(echo = TRUE)
+library(lubridate) # Deal with dates
+library(plyr) #summarize by dates
+library(dplyr) # remove duplicates
+library(ggplot2) # plotting
+library(googlesheets4) ## Read from GoogleDocs https://googlesheets4.tidyverse.org/
+```
+
+## Download GoogleSheet with data
+```{r sheet_download}
+gs4_deauth() ## Prevents google authorization; Needed for remote session (but keys must be used and sheets must be shared to anyone)
+## Download data from all worksheets in google doc sheet
+googleSheetsKey <- "1AzRyUUbEpHJjfKzXyccBazxftDhepGJGj31zzdPzrK4" #https://docs.google.com/spreadsheets/d/1AzRyUUbEpHJjfKzXyccBazxftDhepGJGj31zzdPzrK4/edit#gid=0
+varroa_ss <- gs4_get(googleSheetsKey)
+cage <- as.data.frame(read_sheet(googleSheetsKey, sheet = "Mortality"))
+wash <- 
+
+```
+## Set working directory and load manually annotated label files
+## Set dirname
+
+
+write.csv(labels, file=paste(dirname, "summary.csv", sep="_"))
+
+```
+
+## Generate summaries
+```{r summary}
+## Set directory as working directory
+setwd(paste("./label-output/", dirname, sep=""))
+
+pdf(file=paste(dirname, "_Hour.pdf", sep=""))
+plot(factor(hour(labels[labels$label == "combine",]$dateTime_start)), ylab="Detections per Hour", xlab="Hour", main=paste("Combine", dirname, sep=" "))
+plot(factor(hour(labels[labels$label == "traffic",]$dateTime_start)), ylab="Detections per Hour", xlab="Hour", main=paste("Traffic", dirname, sep=" "))
+plot(factor(hour(labels[labels$label == "bee",]$dateTime_start)), ylab="Detections per Hour", xlab="Hour", main=paste("Bee", dirname, sep=" "), drop=FALSE)
+plot(factor(hour(labels[labels$label == "insect",]$dateTime_start)), ylab="Detections per Hour", xlab="Hour", main=paste("Insect", dirname, sep=" "))
+dev.off()
+
+## Summarize by hour (https://stackoverflow.com/questions/28879985/get-aggregate-sum-of-data-by-day-and-hour)
+labels$hour <- factor(hour(labels$dateTime_start))
+labels$date <- date(labels$dateTime)
+labels_by_hour <- labels %>%
+   group_by(field, date, hour, label) %>%
+   # summarise(duration=sum(duration)) # Sum over duration
+   summarise(count=length(label)) # Counts for each label
+
+write.csv(labels_by_hour, file=paste(dirname, "labels_by_hour.csv", sep="_"))
+```
+
+```{r plot}
+## Set directory as working directory
+setwd(paste("./label-output/", dirname, sep=""))
+
+pdf(file=paste(dirname, "Bee_HourV2.pdf", sep=""))
+labels_by_hour_bee <- labels_by_hour[labels_by_hour$label=="bee",]
+ggplot(labels_by_hour_bee, aes(hour, count)) +    # Create barchart without 0-levels
+  geom_bar(stat = "identity", fill="gray", color="gray") + 
+  labs(title=paste("Bee", dirname, sep=" ")) +
+  scale_x_discrete(drop = FALSE)
+dev.off()
+
+```
+
+
