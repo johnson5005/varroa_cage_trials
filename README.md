@@ -1,1 +1,3 @@
-# varroa_cage_trials
+# Varroa cage trials
+
+R scripts and data for Varroa mite cage trials
