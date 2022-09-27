@@ -22,8 +22,9 @@ gs4_deauth() ## Prevents google authorization; Needed for remote session (but ke
 ## Download data from all worksheets in google doc sheet
 googleSheetsKey <- "1AzRyUUbEpHJjfKzXyccBazxftDhepGJGj31zzdPzrK4" #https://docs.google.com/spreadsheets/d/1AzRyUUbEpHJjfKzXyccBazxftDhepGJGj31zzdPzrK4/edit#gid=0
 varroa_ss <- gs4_get(googleSheetsKey)
-cage <- as.data.frame(read_sheet(googleSheetsKey, sheet = "Mortality"))
-wash <- 
+cage <- as.data.frame(read_sheet(googleSheetsKey, sheet = "Summary"))
+write.csv(cage, file=paste("cage.csv", sep="_"))
+
 
 ```
 ## Set working directory and load manually annotated label files
@@ -59,9 +60,8 @@ write.csv(labels_by_hour, file=paste(dirname, "labels_by_hour.csv", sep="_"))
 
 ```{r plot}
 ## Set directory as working directory
-setwd(paste("./label-output/", dirname, sep=""))
 
-pdf(file=paste(dirname, "Bee_HourV2.pdf", sep=""))
+pdf(file=paste("Bee_HourV2.pdf", sep=""))
 labels_by_hour_bee <- labels_by_hour[labels_by_hour$label=="bee",]
 ggplot(labels_by_hour_bee, aes(hour, count)) +    # Create barchart without 0-levels
   geom_bar(stat = "identity", fill="gray", color="gray") + 
