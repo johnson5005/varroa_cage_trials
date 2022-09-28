@@ -24,22 +24,27 @@ googleSheetsKey <- "1AzRyUUbEpHJjfKzXyccBazxftDhepGJGj31zzdPzrK4" #https://docs.
 varroa_ss <- gs4_get(googleSheetsKey)
 cage <- as.data.frame(read_sheet(googleSheetsKey, sheet = "Summary"))
 write.csv(cage, file=paste("cage.csv", sep="_"))
-
-
 ```
-## Set working directory and load manually annotated label files
-## Set dirname
-
-
-write.csv(labels, file=paste(dirname, "summary.csv", sep="_"))
-
+### Load and prepare previously downloaded data
+```{r load_file}
+cage <- read.csv("cage.csv") ## Load csv file
+cage <- cage[is.na(cage$flag),] ## Remove flagged lines
 ```
 
 ## Generate summaries
 ```{r summary}
-## Set directory as working directory
-setwd(paste("./label-output/", dirname, sep=""))
+fen <- subset(cage, active=="fenpyroximate")
+plot(fen$prop.mites.48 ~ as.factor(fen$pfa))
+plot((fen$bee.48/fen$total.bees.count) ~ as.factor(fen$pfa))
+anova(glm(asin(fen$prop.mites.48) ~ fen$pfa))
 
+
+clove <- subset(cage, active=="clove oil")
+plot(clove$prop.mites.48 ~ as.factor(clove$pfa))
+plot((clove$bee.48/clove$total.bees.count) ~ as.factor(clove$pfa))
+
+
+## Set directory as working directory
 pdf(file=paste(dirname, "_Hour.pdf", sep=""))
 plot(factor(hour(labels[labels$label == "combine",]$dateTime_start)), ylab="Detections per Hour", xlab="Hour", main=paste("Combine", dirname, sep=" "))
 plot(factor(hour(labels[labels$label == "traffic",]$dateTime_start)), ylab="Detections per Hour", xlab="Hour", main=paste("Traffic", dirname, sep=" "))
