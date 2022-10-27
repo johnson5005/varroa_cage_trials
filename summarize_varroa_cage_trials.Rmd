@@ -46,6 +46,9 @@ plot((fen$bee.24/fen$total.bees.count) ~ as.factor(fen$pfa), las=2, ylab="propor
 fen.bee.glm <- glm(cbind(bee.24, round(total.bees.count) - bee.24) ~ pfa,
            family=binomial(logit), data=fen)
 summary(fen.bee.glm)
+
+tapply(fen$prop.mites.24, fen$pfa, mean)
+tapply(fen$bee.24/fen$total.bees.count, fen$pfa, mean)
 dev.off()
 ```
 
@@ -65,6 +68,7 @@ plot((clove$bee.24/clove$total.bees.count) ~ as.factor(clove$pfa), las=2, ylab="
 clove.bee.glm <- glm(cbind(bee.24, round(total.bees.count) - bee.24) ~ pfa,
            family=binomial(logit), data=clove)
 summary(clove.bee.glm)
+tapply(clove$bee.24/clove$total.bees.count, clove$pfa, mean)
 dev.off()
 ```
 
