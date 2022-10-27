@@ -31,17 +31,42 @@ cage <- read.csv("cage.csv") ## Load csv file
 cage <- cage[is.na(cage$flag),] ## Remove flagged lines
 ```
 
-## Generate summaries
-```{r summary}
+## Generate fenpyroximate summary
+```{r fenpyroximate}
+pdf(file="fenpyroximate_cage_tests.pdf")
 fen <- subset(cage, active=="fenpyroximate")
-plot(fen$prop.mites.48 ~ as.factor(fen$pfa))
-plot((fen$bee.48/fen$total.bees.count) ~ as.factor(fen$pfa))
-anova(glm(asin(fen$prop.mites.48) ~ fen$pfa))
 
+## Mites
+plot(fen$prop.mites.24 ~ as.factor(fen$pfa), las=2, ylab="proportion mites killed (24 h.)", xlab="principal functioning agent", main="Fenpyroximate (0.1% in glycerol)")
+fen.mite.glm <- glm(cbind(mite.24, mite.48+mite.72+mites.washed) ~ pfa,
+           family=binomial(logit), data=fen)
+summary(fen.mite.glm)
+## Bees
+plot((fen$bee.24/fen$total.bees.count) ~ as.factor(fen$pfa), las=2, ylab="proportion bees killed (24 h.)", xlab="principal functioning agent", main="Fenpyroximate (0.1% in glycerol)")
+fen.bee.glm <- glm(cbind(bee.24, round(total.bees.count) - bee.24) ~ pfa,
+           family=binomial(logit), data=fen)
+summary(fen.bee.glm)
+dev.off()
+```
 
+## Generate clove oil summary
+```{r clove_oil}
+pdf(file="clove_oil_cage_tests.pdf")
 clove <- subset(cage, active=="clove oil")
-plot(clove$prop.mites.48 ~ as.factor(clove$pfa))
-plot((clove$bee.48/clove$total.bees.count) ~ as.factor(clove$pfa))
+
+## Mites
+plot(clove$prop.mites.24 ~ as.factor(clove$pfa), las=2, ylab="proportion mites killed (24 h.)", xlab="principal functioning agent", main="Clove oil (0.3% in glycerol)")
+clove.mite.glm <- glm(cbind(mite.24, mite.48+mite.72+mites.washed) ~ pfa,
+           family=binomial(logit), data=clove)
+summary(clove.mite.glm)
+
+## Bees
+plot((clove$bee.24/clove$total.bees.count) ~ as.factor(clove$pfa), las=2, ylab="proportion bees killed (24 h.)", xlab="principal functioning agent", main="Clove oil (0.3% in glycerol)")
+clove.bee.glm <- glm(cbind(bee.24, round(total.bees.count) - bee.24) ~ pfa,
+           family=binomial(logit), data=clove)
+summary(clove.bee.glm)
+dev.off()
+```
 
 
 ## Set directory as working directory
