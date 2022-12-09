@@ -38,12 +38,12 @@ fen <- subset(cage, active=="fenpyroximate")
 
 ## Mites
 plot(fen$prop.mites.24 ~ as.factor(fen$pfa), las=2, ylab="proportion mites killed (24 h.)", xlab="principal functioning agent", main="Fenpyroximate (0.1% in glycerol)")
-fen.mite.glm <- glm(cbind(mite.24, mite.48+mite.72+mites.washed) ~ pfa,
+fen.mite.glm <- glm(cbind(mite.24, mite.48+mite.72+mites.washed) ~ date + pfa,
            family=binomial(logit), data=fen)
 summary(fen.mite.glm)
 ## Bees
 plot((fen$bee.24/fen$total.bees.count) ~ as.factor(fen$pfa), las=2, ylab="proportion bees killed (24 h.)", xlab="principal functioning agent", main="Fenpyroximate (0.1% in glycerol)")
-fen.bee.glm <- glm(cbind(bee.24, round(total.bees.count) - bee.24) ~ pfa,
+fen.bee.glm <- glm(cbind(bee.24, round(total.bees.count) - bee.24) ~ date + pfa,
            family=binomial(logit), data=fen)
 summary(fen.bee.glm)
 
@@ -59,13 +59,13 @@ clove <- subset(cage, active=="clove oil")
 
 ## Mites
 plot(clove$prop.mites.24 ~ as.factor(clove$pfa), las=2, ylab="proportion mites killed (24 h.)", xlab="principal functioning agent", main="Clove oil (0.3% in glycerol)")
-clove.mite.glm <- glm(cbind(mite.24, mite.48+mite.72+mites.washed) ~ pfa,
+clove.mite.glm <- glm(cbind(mite.24, mite.48+mite.72+mites.washed) ~ date + pfa,
            family=binomial(logit), data=clove)
 summary(clove.mite.glm)
 
 ## Bees
 plot((clove$bee.24/clove$total.bees.count) ~ as.factor(clove$pfa), las=2, ylab="proportion bees killed (24 h.)", xlab="principal functioning agent", main="Clove oil (0.3% in glycerol)")
-clove.bee.glm <- glm(cbind(bee.24, round(total.bees.count) - bee.24) ~ pfa,
+clove.bee.glm <- glm(cbind(bee.24, round(total.bees.count) - bee.24) ~ date + pfa,
            family=binomial(logit), data=clove)
 summary(clove.bee.glm)
 
